@@ -108,9 +108,10 @@ def num_factors(n):
 def sus_points(score):
     """Return the new score of a player taking into account the Sus Fuss rule."""
     # BEGIN PROBLEM 4
+    MAX_CHECK = 10
     if num_factors(score) == 3 or num_factors(score) == 4:
         i = 0
-        while i < 10:
+        while i < MAX_CHECK:
             if is_prime(score + i):
                 return score + i
             i += 1
