@@ -108,10 +108,9 @@ def num_factors(n):
 def sus_points(score):
     """Return the new score of a player taking into account the Sus Fuss rule."""
     # BEGIN PROBLEM 4
-    MAX_CHECK = 10
     if num_factors(score) == 3 or num_factors(score) == 4:
-        i = 0
-        while i < MAX_CHECK:
+        i = 1
+        while i > 0:
             if is_prime(score + i):
                 return score + i
             i += 1
@@ -197,7 +196,9 @@ def always_roll(n):
     """
     assert n >= 0 and n <= 10
     # BEGIN PROBLEM 6
-    "*** YOUR CODE HERE ***"
+    def strategy(player_score, opponent_score):
+        return n
+    return strategy
     # END PROBLEM 6
 
 
@@ -228,7 +229,15 @@ def is_always_roll(strategy, goal=GOAL):
     False
     """
     # BEGIN PROBLEM 7
-    "*** YOUR CODE HERE ***"
+    score = 0
+    while score < goal:
+        opponent_score = 0
+        while opponent_score < goal:
+            if strategy(score, opponent_score) != strategy(score, opponent_score+1):
+                return False
+            opponent_score += 1
+        score += 1
+    return True
     # END PROBLEM 7
 
 
@@ -244,7 +253,15 @@ def make_averaged(original_function, times_called=1000):
     3.0
     """
     # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
+    def average_dice(*args):
+        i, total = 0, 0
+        while i < times_called:
+            score = original_function(*args)
+            total += score
+            i += 1
+        average = total / times_called
+        return average
+    return average_dice
     # END PROBLEM 8
 
 
@@ -257,7 +274,17 @@ def max_scoring_num_rolls(dice=six_sided, times_called=1000):
     1
     """
     # BEGIN PROBLEM 9
-    "*** YOUR CODE HERE ***"
+    num_rolls = 1
+    MAX_CHECK, max_avg = 10, 0
+    averaged_roll = make_averaged(roll_dice, times_called)
+    best_num = 1
+    while num_rolls <= MAX_CHECK:
+        avg_score = averaged_roll(num_rolls, dice)
+        if avg_score > max_avg:
+            max_avg = avg_score
+            best_num = num_rolls
+        num_rolls += 1
+    return best_num
     # END PROBLEM 9
 
 
@@ -302,14 +329,23 @@ def boar_strategy(score, opponent_score, threshold=11, num_rolls=6):
     points, and returns NUM_ROLLS otherwise. Ignore score and Sus Fuss.
     """
     # BEGIN PROBLEM 10
-    return num_rolls  # Remove this line once implemented.
+    boar_score = boar_brawl(score, opponent_score)
+    if boar_score >= threshold:
+        return 0
+    else:
+        return num_rolls  # Remove this line once implemented.
     # END PROBLEM 10
 
 
 def sus_strategy(score, opponent_score, threshold=11, num_rolls=6):
     """This strategy returns 0 dice when your score would increase by at least threshold."""
     # BEGIN PROBLEM 11
-    return num_rolls  # Remove this line once implemented.
+    sus_score = sus_update(0, score, opponent_score)
+    get = sus_score - score
+    if get >= threshold:
+        return 0
+    else:
+        return num_rolls  # Remove this line once implemented.
     # END PROBLEM 11
 
 
@@ -319,7 +355,14 @@ def final_strategy(score, opponent_score):
     *** YOUR DESCRIPTION HERE ***
     """
     # BEGIN PROBLEM 12
-    return 6  # Remove this line once implemented.
+    sus_score = sus_update(0, score, opponent_score)
+    get = sus_score - score
+    six_averaged = make_averaged(roll_dice, 1)
+    avg_six = six_averaged(6)
+    if get >= avg_six:
+        return 0
+    else:
+        return 6  # Remove this line once implemented.
     # END PROBLEM 12
 
 
